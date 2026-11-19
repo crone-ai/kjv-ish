@@ -1,0 +1,40 @@
+:root {
+  color-scheme: light;
+  --bg: #fbf8ef;
+  --accent-bg: #f0ead8;
+  --text: #25261e;
+  --text-light: #5d5c4f;
+  --border: #d8cebb;
+  --accent: #714432;
+  --accent-hover: #4b2b20;
+  --code: #744738;
+  --marked: #f0dca4;
+  --mono-font: ui-monospace, SFMono-Regular, Consolas, monospace;
+  --serif-font: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+}
+
+body { grid-template-columns: minmax(0, 1fr) min(48rem, calc(100% - 2.5rem)) minmax(0, 1fr); }
+.site-header {
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem max(1.25rem, calc((100% - 48rem) / 2));
+}
+.site-header .wordmark { font: 700 1.25rem var(--serif-font); text-decoration: none; color: var(--text); }
+.site-header nav { display: flex; gap: 1.25rem; font-size: 0.95rem; }
+.site-header nav a { border: 0; padding: 0; text-decoration: underline; text-underline-offset: 0.2em; }
+.skip-link { position: absolute; left: -100vw; }
+.skip-link:focus { left: 1rem; top: 1rem; z-index: 1; background: var(--bg); padding: 0.5rem; }
+main { padding-top: clamp(1.5rem, 4vw, 3.5rem); }
+main h1, main h2, main h3 { font-family: var(--serif-font); }
+main h1 { font-size: clamp(2.4rem, 7vw, 4.5rem); line-height: 1; margin: 0 0 1rem; }
+.home main > p:first-of-type { font: 400 clamp(1.4rem, 4vw, 2rem) var(--serif-font); color: var(--accent); }
+.home main > p:first-of-type strong { font-weight: 500; }
+main h2 { border-top: 1px solid var(--border); padding-top: 1.3rem; margin-top: 2.6rem; }
+main table { display: block; width: fit-content; max-width: 100%; overflow-x: auto; font-size: 0.94rem; }
+main th, main td { padding: 0.48rem 0.65rem; }
+main ol li + li, main ul li + li { margin-top: 0.5rem; }
+body > footer { margin-top: 3rem; padding: 1.2rem 0 1.6rem; }

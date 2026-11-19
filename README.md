@@ -6,6 +6,8 @@ We’re fans of the King James Bible. We like its cadence, and we’re happy to 
 
 KJV-ish is an English revision in progress. The [verse text](text/kjv-ish.tsv) contains all 66 books and 31,102 verses. The [approved edit ledger](approved-edits.json) is empty at this checkpoint. Workshop choices are evidence for editorial review. An approved ledger entry is what changes the edition.
 
+The [project site at kjvish.com](https://kjvish.com/) is built from this README. See the [site setup](site/README.md) for how to preview it.
+
 ## Where we start
 
 Michael Peter (Stone) Engelbrite described the American King James Version as a word-for-word update of the KJV focused on spelling and vocabulary. He kept the grammar because he believed changing it could change the doctrine. He placed the AKJV in the public domain on November 8, 1999. The author's statement and the publisher's current site give the same account. [Engelbrite’s original statement](https://engelbrite.com/inspiredidea.com/home/akj/index.html) · [AKJV publisher](https://akjv.us/)
