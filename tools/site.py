@@ -68,6 +68,9 @@ def markdown_body(text):
     tokens = parser.parse(text)
     slugs = set()
     for index, token in enumerate(tokens):
+        alignment = token.attrs.pop("style", "").removeprefix("text-align:")
+        if alignment in {"left", "center", "right"}:
+            token.attrJoin("class", f"align-{alignment}")
         if token.type == "heading_open":
             name = tokens[index + 1].content.casefold()
             slug = re.sub(r"[^\w\s-]", "", name)

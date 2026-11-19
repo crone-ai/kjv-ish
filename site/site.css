@@ -36,5 +36,8 @@ main h1 { font-size: clamp(2.4rem, 7vw, 4.5rem); line-height: 1; margin: 0 0 1re
 main h2 { border-top: 1px solid var(--border); padding-top: 1.3rem; margin-top: 2.6rem; }
 main table { display: block; width: fit-content; max-width: 100%; overflow-x: auto; font-size: 0.94rem; }
 main th, main td { padding: 0.48rem 0.65rem; }
+.align-left { text-align: left; }
+.align-center { text-align: center; }
+.align-right { text-align: right; }
 main ol li + li, main ul li + li { margin-top: 0.5rem; }
 body > footer { margin-top: 3rem; padding: 1.2rem 0 1.6rem; }
