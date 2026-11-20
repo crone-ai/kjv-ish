@@ -1,5 +1,4 @@
-/* STEP reader shell. UI tokens follow crone-st's standard light/dark themes.
-   Wotfard assets are reused locally from crone-st; see reader/font-notice.md. */
+/* Reader layout and light and dark color themes. */
 @font-face{font-family:ReaderSerif;src:url('../fonts/NotoSerif-Regular.woff') format('woff');font-display:swap}
 @font-face{font-family:SIL_EZRA;src:url('../fonts/SILEOT.woff') format('woff');font-display:swap}
 :root{

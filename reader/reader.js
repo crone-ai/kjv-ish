@@ -12,7 +12,6 @@
     reference: hash.get('ref') || saved.reference || 'Gen.1',
     translation: hash.get('version') || saved.translation || 'KJVish',
     language: hash.get('lang') || saved.language || 'both',
-    extraEditions: saved.extraEditions===true || !mainEditions.includes(hash.get('version') || saved.translation || 'KJVish'),
     speakOnClick: saved.speakOnClick!==false,
     theme: saved.theme==='light'?'light':'dark', notesScope: 'verse',
     commentary: saved.commentaryUiVersion===2 ? saved.commentary || '' : '', layout: saved.layout || 'parallel',
@@ -40,7 +39,7 @@
     return template.innerHTML;
   }
   function persist() {
-    try { localStorage.setItem(storageKey, JSON.stringify({speakOnClick:state.speakOnClick, theme:state.theme, reference:state.reference, translation:state.translation, language:state.language, commentary:state.commentary, commentaryUiVersion:2, layout:state.layout, font:state.font, extraEditions:state.extraEditions, typographyVersion:2, study:state.study, selected:state.selected, position:state.position})); } catch (_) { /* Private browsing can disable storage. */ }
+    try { localStorage.setItem(storageKey, JSON.stringify({speakOnClick:state.speakOnClick, theme:state.theme, reference:state.reference, translation:state.translation, language:state.language, commentary:state.commentary, commentaryUiVersion:2, layout:state.layout, font:state.font, typographyVersion:2, study:state.study, selected:state.selected, position:state.position})); } catch (_) { /* Private browsing can disable storage. */ }
     const params = new URLSearchParams({ref:state.reference,version:state.translation,lang:state.language});
     history.replaceState(null,'',`#${params}`);
   }
@@ -66,7 +65,6 @@
     document.body.classList.toggle('study-closed', !state.study);
     $('fontValue').textContent=state.font;
     $('layout').value=state.layout;
-    $('extraEditions').checked=state.extraEditions;
     $('speakOnClick').checked=state.speakOnClick;
     $('studyVisible').checked=state.study;
     $('studyToggle').setAttribute('aria-expanded', String(state.study));
@@ -106,88 +104,12 @@
     })).filter(t=>t.base!=='H0000' && t.base!=='G0000');
   }
   function sameStrong(a,b) { return a.base===b.base && (!a.suffix || !b.suffix || a.suffix===b.suffix); }
-  const addedWordLinks = new WeakMap();
-  const reverseWordLinks = new WeakMap();
-  const linkDescriptions = {
-    both: 'Inferred phrase link from KJV and BSB',
-    kjv: 'Inferred phrase link from KJV',
-    bsb: 'Inferred phrase link from BSB',
-    grammar: 'Link checked against the Hebrew text',
-  };
-  async function loadAkjvWordLinks(passage) {
-    const chapters = new Set();
-    for (const anchor of passage.querySelectorAll('.verse[lang=en] a.verseLink[name]')) {
-      const chapter = chapterReference(anchor.getAttribute('name'));
-      if (/^[1-3]?[A-Za-z]+(?:\.\d+)?$/.test(chapter)) chapters.add(chapter);
-    }
-    const blocks = await Promise.all([...chapters].map(async chapter => {
-      try {
-        const response = await fetch(`/reader/akjv-alignment/${chapter}.json`);
-        if (response.ok) return await response.json();
-      } catch (_) { /* Publisher tags work independently of these additions. */ }
-      return {};
-    }));
-    return Object.assign({}, ...blocks);
-  }
-  function applyAkjvWordLinks(passage, verses, detachedOriginal) {
-    for (const verse of passage.querySelectorAll('.verse[lang=en]')) {
-      const ref = verse.querySelector('a.verseLink[name]')?.getAttribute('name');
-      const entry = verses[ref];
-      if (!entry) continue;
-      const row = verse.closest('.verseGrouping');
-      const sourceVerse = row?.querySelector('.singleVerse:not([lang=en]) .verse') || detachedOriginal.get(ref);
-      const original = [...(sourceVerse?.querySelectorAll('[strong]') || [])];
-      const walker = document.createTreeWalker(verse, NodeFilter.SHOW_TEXT);
-      const words = [];
-      for (let node = walker.nextNode(); node; node = walker.nextNode()) {
-        if (node.parentElement.closest('.verseLink,.verseNumber,.inlineNote,.note')) continue;
-        for (const match of node.data.matchAll(/[\p{L}\p{M}]+(?:['’\-][\p{L}\p{M}]+)*/gu)) {
-          words.push({node, start:match.index, text:match[0]});
-        }
-      }
-      // Require the expected wording before trusting any saved positions.
-      if (words.length !== entry.words.length || words.some((word, i) => word.text !== entry.words[i])) continue;
-      const changes = new Map();
-      for (const link of entry.links) {
-        const word = words[link.word];
-        if (!word || word.node.parentElement.closest('[strong]')) continue;
-        const peers = link.targets.map(target => original[target.index]);
-        if (sourceVerse && link.targets.some((target, i) =>
-          peers[i]?.getAttribute('strong') !== target.strong || peers[i]?.textContent !== target.text)) continue;
-        if (!changes.has(word.node)) changes.set(word.node, []);
-        changes.get(word.node).push({ word, link, peers:peers.filter(Boolean) });
-      }
-      for (const [node, edits] of changes) {
-        const fragment = document.createDocumentFragment();
-        let cursor = 0;
-        for (const {word, link, peers} of edits.sort((a,b) => a.word.start-b.word.start)) {
-          fragment.append(node.data.slice(cursor,word.start));
-          const span = document.createElement('span');
-          span.textContent = word.text;
-          span.setAttribute('strong', [...new Set(link.targets.map(t => t.strong))].join(' '));
-          span.dataset.akjvLink = link.source;
-          span.title = linkDescriptions[link.source];
-          addedWordLinks.set(span, peers);
-          for (const peer of peers) {
-            if (!reverseWordLinks.has(peer)) reverseWordLinks.set(peer, []);
-            reverseWordLinks.get(peer).push(span);
-          }
-          fragment.append(span);
-          cursor = word.start + word.text.length;
-        }
-        fragment.append(node.data.slice(cursor));
-        node.replaceWith(fragment);
-      }
-    }
-  }
   function matchingWords(word) {
     const row=word?.closest('.verseGrouping,.solo-verse');
     if(!row)return [];
-    if(addedWordLinks.has(word))return [word,...addedWordLinks.get(word).filter(peer=>peer.isConnected)];
     const tags=strongTags(word.getAttribute('strong'));
-    const matches=[...row.querySelectorAll('[strong]:not([data-akjv-link])')]
+    return [...row.querySelectorAll('[strong]')]
       .filter(el=>strongTags(el.getAttribute('strong')).some(t=>tags.some(tag=>sameStrong(tag,t))));
-    return [...matches,...(reverseWordLinks.get(word) || [])];
   }
   function wordVersion(word) {
     const version=word.closest('.singleVerse')?.querySelector('[data-version]')?.dataset.version;
@@ -250,17 +172,11 @@
 
   function verseFormEntry(word) {
     if (isOriginal(wordVersion(word))) return surfaceBySpan.get(word)?.form;
-    const linked=addedWordLinks.get(word);
-    let candidates;
-    if(linked?.length){
-      candidates=linked.map(peer=>surfaceBySpan.get(peer));
-    } else {
-      const tags=strongTags(word.getAttribute('strong'));
-      const lexical=tags.filter(tag=>!isGrammarTag(tag));
-      const chosen=lexical.length ? lexical : tags;
-      candidates=(sourceByReference.get(verseReference(word)) || []).filter(occurrence=>
-        occurrence.tags.some(tag=>chosen.some(other=>sameStrong(other,tag))));
-    }
+    const tags=strongTags(word.getAttribute('strong'));
+    const lexical=tags.filter(tag=>!isGrammarTag(tag));
+    const chosen=lexical.length ? lexical : tags;
+    const candidates=(sourceByReference.get(verseReference(word)) || []).filter(occurrence=>
+      occurrence.tags.some(tag=>chosen.some(other=>sameStrong(other,tag))));
     const [first]=candidates;
     if (first?.form && candidates.every(candidate=>candidate?.form===first.form)) return first.form;
   }
@@ -332,8 +248,6 @@
     if(english.length && original.length)fragments.push(document.createTextNode(' ↔ '));
     if(original.length)addText(original,originalVersion()==='THOT'?'rtl':'ltr');
     if(!english.length || !original.length)fragments.push(document.createTextNode(state.language==='both' ? ' · No counterpart is tagged separately in this verse.' : ' · Choose English + original to compare.'));
-    const addedLink=linkDescriptions[active.dataset.akjvLink];
-    if(addedLink)fragments.push(document.createTextNode(' · '+addedLink));
     status.replaceChildren(...fragments);$('comparisonBar').hidden=false;
     $('comparisonDetails').hidden=!state.pinnedWord;
     $('comparisonClear').hidden=!state.pinnedWord;
@@ -394,12 +308,10 @@
           detachedOriginal=originalVerses(detached.content);
         } catch (_) { /* Fall back to the dictionary if the original edition is unavailable. */ }
       }
+      const osis=data.osisId.split('-')[0];
+      const parts=osis.split('.');
+      await chapters(parts[0],chapterReference(osis));
       if (token!==state.request) return;
-      if (state.translation==='AKJVPlus') {
-        const links=await loadAkjvWordLinks(template.content);
-        if (token!==state.request) return;
-        applyAkjvWordLinks(template.content,links,detachedOriginal);
-      }
       state.data=data;state.reference=data.osisId; state.word=null;state.pinnedWord=null;state.previewWord=null;
       sourceByReference=indexSourceForms(state.language==='english' ? detachedOriginal : originalVerses(template.content),audioBook);
       $('passage').replaceChildren(template.content);
@@ -409,20 +321,18 @@
       $('chapterTitle').textContent=humanReference(data.osisId,data.reference);
       $('chapterCommentary').disabled=false;
       $('chapterCommentary').setAttribute('aria-label',`Open all commentary for ${humanReference(chapterReference(data.osisId),data.reference)}`);
-      document.title=`${data.reference} · STEP Reader`;
+      document.title=`${data.reference} · KJV-ish`;
       $('editionLabel').textContent=`${state.translation==='KJV'?'King James Version':state.translation==='BSB'?'Berean Standard Bible':labelFor(state.translation)}${state.language==='both' ? ' · '+name : ''}`;
       $('reference').value='';$('reference').placeholder=`Go to a passage…`;
       $('translation').value=state.translation;$('language').value=state.language;
-      const osis=data.osisId.split('-')[0];const parts=osis.split('.');
-      $('book').value=parts[0];await chapters(parts[0],chapterReference(osis));
-      if (token!==state.request) return;
+      $('book').value=parts[0];
       ['previous','next'].forEach(dir=>{
         const key=data[`${dir}Chapter`]?.osisKeyId;
         $(dir).disabled=!key || key===data.osisId;
         $(`${dir}Bottom`).disabled=$(dir).disabled;
       });
       const originalCredit=isNT?'Greek: SBLGNT · SBL/Logos · STEP tagging':'Hebrew: THOT · STEP Bible · CC BY 4.0';
-      const englishCredit=state.translation==='KJVish'?'KJV-ish · The Autodidact’s Translation':state.translation==='AKJVPlus'?'American King James Version (1999) · Strong’s links where available':state.translation==='BSB'?'Berean Standard Bible · Public domain':state.translation==='engweb2025peb'?'World English Bible · Public domain':'King James Version · Public domain in the USA';
+      const englishCredit=state.translation==='KJVish'?'KJV-ish · The Autodidact’s Translation':state.translation==='BSB'?'Berean Standard Bible · Public domain':'King James Version · Public domain in the USA';
       $('credits').textContent=englishCredit+(state.language==='both'?' · '+originalCredit:'');
       $('readingHint').textContent=isMobile() ? 'Tap words to compare · Tap verses for notes' : 'Select a word to compare · Select a verse for notes';
       renderWordMatch();
@@ -486,7 +396,6 @@
         if (token!==state.studyRequest) return;
         const cards=(info?.vocabInfos || []).map(v=>`<article class="word-card"><p class="word-tag">${escape(v.strongNumber)}</p><p class="word-title" dir="auto">${escape(v.accentedUnicode)}</p>${pronunciationControl(v)}<p class="translit">${escape(plain(v.stepTransliteration))}</p><p class="word-gloss">${escape(plain(v.stepGloss || v.shortDef))}</p><div class="definition">${markup(v.briefDef || v.mediumDef || v.shortDef)}</div>${v.mediumDef && v.mediumDef!==v.briefDef ? `<details><summary>Full definition</summary><div class="definition">${markup(v.mediumDef)}</div></details>` : ''}</article>`);
         body.innerHTML=cards.join('') || '<p class="study-empty">No linked definition is available for this word in the installed data.</p>';
-        if(word.addedLink)body.insertAdjacentHTML('afterbegin',`<p class="study-empty">${escape(word.addedLink)}</p>`);
         body.insertAdjacentHTML('beforeend','<p class="study-source">Original-language definitions supplied by the STEP engine. <a href="https://www.stepbible.org" target="_blank" rel="noreferrer">STEP Bible ↗</a></p>');
       } catch (e) { if (token===state.studyRequest) body.textContent=e.message; }
     } else if (state.tab==='footnotes') {
@@ -569,7 +478,6 @@
     for(const dir of ['previous','next']) for(const id of [dir,`${dir}Bottom`]) $(id).onclick=()=>read(state.data?.[`${dir}Chapter`]?.osisKeyId);
     $('referenceForm').onsubmit=e=>{e.preventDefault();if($('reference').value.trim())read($('reference').value.trim());};
     $('translation').onchange=switchTranslation;
-    $('extraEditions').onchange=()=>{state.extraEditions=$('extraEditions').checked;const choices=fillTranslations();if(!choices.some(m=>m.initials===state.translation))switchTranslation();persist();};
     $('language').onchange=switchLanguage;
     $('speakOnClick').onchange=()=>{
       state.speakOnClick=$('speakOnClick').checked;
@@ -596,7 +504,7 @@
         const version=wordVersion(word);
         state.word={
           strong:lexicalTags(word), version, reference:verseReference(word),
-          preferLexical:!isOriginal(version), addedLink:linkDescriptions[word.dataset.akjvLink],
+          preferLexical:!isOriginal(version),
         };
         state.pinnedWord=word;state.previewWord=null;renderWordMatch();
         if(state.tab==='word')renderStudy();
@@ -643,8 +551,8 @@
   }
   function fillTranslations() {
     const preference=mainEditions;
-    const labels={KJVish:'KJV-ish',KJV:'KJV',AKJVPlus:'AKJV (1999) + Strong’s',BSB:'BSB',engweb2025peb:'WEB (extra)'};
-    const english=state.modules.filter(m=>m.category==='BIBLE' && m.languageCode==='en' && (state.extraEditions || mainEditions.includes(m.initials)));
+    const labels={KJVish:'KJV-ish',KJV:'KJV',BSB:'BSB'};
+    const english=state.modules.filter(m=>m.category==='BIBLE' && m.languageCode==='en' && mainEditions.includes(m.initials));
     english.sort((a,b)=>(preference.indexOf(a.initials)<0?99:preference.indexOf(a.initials))-(preference.indexOf(b.initials)<0?99:preference.indexOf(b.initials)));
     $('translation').replaceChildren(...english.map(m=>option(m.initials,labels[m.initials] || m.name)));
     $('translation').value=english.some(m=>m.initials===state.translation)?state.translation:english[0]?.initials;
