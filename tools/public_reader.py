@@ -1,5 +1,5 @@
 """Public KJV-ish routes for STEP and the private pronunciation archive."""
-from hmac import compare_digest, digest
+from hmac import digest
 from ipaddress import ip_address, ip_network
 import base64
 import json
@@ -66,8 +66,7 @@ class Pronunciations:
         self.directory = Path(data["audioDirectory"]).resolve()
         self.hostname = data["cdnHostname"]
         self.signing_key = data["signingKey"].encode()
-        self.origin_key = data["originKey"]
-        if not re.fullmatch(r"kjvish-[a-z0-9-]+\.b-cdn\.net", self.hostname) or len(self.signing_key) < 16 or len(self.origin_key) < 32:
+        if not re.fullmatch(r"kjvish-[a-z0-9-]+\.b-cdn\.net", self.hostname) or len(self.signing_key) < 16:
             raise ValueError("Invalid audio delivery configuration")
         self.lookup = {}
         self.by_base = {}
@@ -92,7 +91,6 @@ class Pronunciations:
                 form: f"{language}/{entry['headwordFile']}" if "headwordFile" in entry else f"word-forms/{book}/{entry['file']}"
                 for form, entry in json.loads(entries.read_text())["forms"].items()
             }
-        self.clips = frozenset(self.lookup.values()) | frozenset(clip for book in self.forms.values() for clip in book.values())
         self.db = config_path.with_name("audio-limits.sqlite3")
         with sqlite3.connect(self.db) as db:
             db.execute("CREATE TABLE IF NOT EXISTS plays (client TEXT NOT NULL, played INTEGER NOT NULL)")
@@ -134,13 +132,6 @@ class Pronunciations:
         token = "HS256-" + base64.urlsafe_b64encode(signed).decode().rstrip("=")
         return f"https://{self.hostname}{path}?token={token}&expires={expires}"
 
-    def origin_file(self, clip):
-        if clip not in self.clips or not CLIP.fullmatch(clip):
-            return None
-        first, *parts = clip.split("/")
-        version = {"hebrew": "eleven-v4-erez", "greek": "eleven-v4-eleni", "word-forms": "eleven-v4-turbo"}[first]
-        return self.directory.joinpath(first, version, *parts)
-
 
 class ReaderRoutes:
     def __init__(self, engine_port, audio_config):
@@ -152,8 +143,6 @@ class ReaderRoutes:
     def dispatch(self, handler, url):
         if url.path == "/listen":
             return self.listen(handler, url.query)
-        if url.path.startswith("/_audio-origin/"):
-            return self.origin(handler, url.path.removeprefix("/_audio-origin/"))
         if not url.path.startswith("/rest/"):
             return False
         try:
@@ -209,14 +198,4 @@ class ReaderRoutes:
         handler.send_header("Cache-Control", "no-store")
         handler.send_header("Content-Length", "0")
         handler.end_headers()
-        return True
-
-    def origin(self, handler, clip):
-        valid = self.audio and compare_digest(handler.headers.get("X-KJVish-Origin", "").encode(), self.audio.origin_key.encode())
-        source = self.audio.origin_file(clip) if valid else None
-        if not source or not source.is_file():
-            handler.send_error(404)
-            return True
-        handler.send_bytes(source.read_bytes(), "audio/mpeg", cache="public, max-age=86400",
-                           extra={"Cloudflare-CDN-Cache-Control": "no-store"})
         return True

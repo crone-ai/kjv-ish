@@ -43,9 +43,17 @@ per day for an IP address or IPv6 network. Bunny limits bursts and caps total
 audio delivery to 100 GB per month. These limits apply to audio. Reading and
 translation downloads use separate routes.
 
-The local serving copy is the CDN origin. The origin requires a Bunny-only
-request header. Both delivery keys belong in the hosting Mac's private
-configuration, with file access limited to the hosting user. Keep the
-recordings and full playback indexes outside the public checkout, static
-build, and GitHub release archives. A backup is a separate private archive in
-Google Cloud Storage with a SHA-256 checksum.
+Bunny fetches cache misses directly from a private Google Cloud Storage bucket
+using a dedicated identity that can read individual origin objects. The
+origin bucket contains only the hashed MP3 paths. Its public access is
+blocked. The reader keeps the pronunciation indexes locally so it can issue
+one short-lived playback link at a time.
+
+The Bunny player signing key belongs in the hosting Mac's private reader
+configuration. The Google origin credentials belong in Bunny's origin
+authentication settings. Keep recordings, full indexes, and credentials
+outside the public checkout, static build, and GitHub release archives.
+
+The working library remains on the Mac. Versioned archives and SHA-256
+checksums live in a separate private Google Cloud Storage bucket. Verify a
+new archive by reading it back before changing or retiring a working copy.

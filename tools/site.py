@@ -206,7 +206,7 @@ class Handler(BaseHTTPRequestHandler):
             return
         self.send_bytes(page.data, page.media_type)
 
-    def send_bytes(self, data, media_type, cache="no-cache", extra=None):
+    def send_bytes(self, data, media_type, cache="no-cache"):
         policy = "default-src 'none'; style-src 'self'; img-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'"
         if urlsplit(self.path).path == "/":
             policy += "; script-src 'self'; font-src 'self'; connect-src 'self'; media-src 'self' https://kjvish-audio.b-cdn.net"
@@ -217,8 +217,6 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("X-Content-Type-Options", "nosniff")
         self.send_header("Referrer-Policy", "strict-origin-when-cross-origin")
         self.send_header("Content-Security-Policy", policy)
-        for name, value in (extra or {}).items():
-            self.send_header(name, value)
         self.end_headers()
         if self.command == "GET":
             try:
