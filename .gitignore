@@ -2,3 +2,6 @@
 __pycache__/
 .site-venv/
 .site-build/
+
+.site-runtime/
+*.mp3

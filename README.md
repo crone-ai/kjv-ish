@@ -6,7 +6,7 @@ We’re fans of the King James Bible. We like its cadence, and we’re happy to 
 
 KJV-ish is an English revision in progress. The [verse text](text/kjv-ish.tsv) contains all 66 books and 31,102 verses. The [approved edit ledger](approved-edits.json) is empty at this checkpoint. Workshop choices are evidence for editorial review. An approved ledger entry is what changes the edition.
 
-The [project site at kjvish.com](https://kjvish.com/) is built from this README. See the [site setup](site/README.md) for how to preview it.
+Read the Bible and play word pronunciations at [kjvish.com](https://kjvish.com/). The [About page](https://kjvish.com/about/) is built from this README. See the [site setup](site/README.md) for how to preview it.
 
 ## Where we start
 
@@ -66,7 +66,7 @@ python3 tools/edition.py check
 
 The frequency tables can be rebuilt with the companion KJV Markdown export made from the pinned Gutenberg file. Pass its checkout folder with `python3 tools/edition.py frequency --kjv-markdown /path/to/kjv-markdown`.
 
-The verse TSV is the standalone edition. The HeroMonk Bible checkout can build a SWORD module from this repository’s source archive and edit ledger. Its reader interface, audio library, commentaries, and Workshop votes live in the separate reader workspace.
+The verse TSV is the standalone edition. The HeroMonk Bible checkout can build a SWORD module from this repository’s source archive and edit ledger. The public reader interface lives under [reader/](reader/). STEP runs separately with the public reading library. The pronunciation recordings and Workshop votes are kept outside this repository.
 
 ## License
 

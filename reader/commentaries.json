@@ -1,0 +1,134 @@
+[
+  {
+    "title": "Tyndale Open Study Notes",
+    "ids": [
+      "TNotes"
+    ],
+    "reuse": {
+      "kind": "share-alike",
+      "note": "CC BY-SA 4.0. Adapted content you distribute must keep share-alike terms.",
+      "evidence": "https://tyndaleopenresources.com/"
+    }
+  },
+  {
+    "title": "Matthew Henry's Concise Commentary on the Whole Bible",
+    "ids": [
+      "MHCC"
+    ]
+  },
+  {
+    "title": "Matthew Henry's Complete Commentary on the Whole Bible",
+    "ids": [
+      "MHC"
+    ]
+  },
+  {
+    "title": "Treasury of Scripture Knowledge",
+    "ids": [
+      "TSK"
+    ]
+  },
+  {
+    "title": "Matthew Henry's Modern English Commentary",
+    "ids": [
+      "Eng_MHM",
+      "MHM"
+    ]
+  },
+  {
+    "title": "Jamieson–Fausset–Brown Bible Commentary",
+    "ids": [
+      "JFB"
+    ]
+  },
+  {
+    "title": "C. H. Spurgeon's Treasury of David",
+    "ids": [
+      "TDavid"
+    ]
+  },
+  {
+    "title": "Adam Clarke's Commentary and Critical Notes on the Bible",
+    "ids": [
+      "Clarke"
+    ]
+  },
+  {
+    "title": "Keil and Delitzsch Biblical Commentary on the Old Testament",
+    "ids": [
+      "KD"
+    ]
+  },
+  {
+    "title": "Calvin's Collected Commentaries",
+    "ids": [
+      "CalvinCommentaries"
+    ]
+  },
+  {
+    "title": "John Wesley's Notes on the Bible",
+    "ids": [
+      "Wesley"
+    ]
+  },
+  {
+    "title": "The People's New Testament",
+    "ids": [
+      "PNT"
+    ]
+  },
+  {
+    "title": "The Fourfold Gospel and Commentary on Acts of Apostles",
+    "ids": [
+      "TFG"
+    ]
+  },
+  {
+    "title": "Illustrated New Testament",
+    "ids": [
+      "Abbott"
+    ]
+  },
+  {
+    "title": "Scripture Passages Quoting Scripture",
+    "ids": [
+      "QuotingPassages"
+    ]
+  },
+  {
+    "title": "John Lightfoot Commentary",
+    "ids": [
+      "Lightfoot"
+    ]
+  },
+  {
+    "title": "Luther's Commentary on Selected Bible Passages",
+    "ids": [
+      "Luther"
+    ]
+  },
+  {
+    "title": "Darby Translation Notes",
+    "ids": [
+      "DTN"
+    ]
+  },
+  {
+    "title": "Burkitt's Expository Notes",
+    "ids": [
+      "Burkitt"
+    ]
+  },
+  {
+    "title": "Scofield Reference Notes, 1917 Edition",
+    "ids": [
+      "Scofield"
+    ]
+  },
+  {
+    "title": "Tischendorf's Spurious Passages of the GNT",
+    "ids": [
+      "Spurious"
+    ]
+  }
+]

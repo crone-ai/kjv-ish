@@ -10,16 +10,25 @@ import threading
 from urllib.parse import urlsplit, urlunsplit
 
 from markdown_it import MarkdownIt
+from public_reader import ReaderRoutes
 
 ROOT = Path(__file__).resolve().parents[1]
 SITE = "https://kjvish.com"
 REPO = "https://github.com/crone-ai/kjv-ish"
 DOCUMENTS = {
-    "/": ("README.md", "KJV-ish — The Autodidact’s Translation"),
+    "/about/": ("README.md", "KJV-ish — The Autodidact’s Translation"),
     "/contributing/": ("CONTRIBUTING.md", "Contributing to KJV-ish"),
     "/attribution/": ("NOTICE.md", "KJV-ish license and attribution"),
 }
 ASSETS = {
+    "/": ("reader/index.html", "text/html; charset=utf-8"),
+    "/reader/reader.js": ("reader/reader.js", "text/javascript; charset=utf-8"),
+    "/reader/reader.css": ("reader/reader.css", "text/css; charset=utf-8"),
+    "/reader/type.css": ("reader/type.css", "text/css; charset=utf-8"),
+    "/reader/library.json": ("reader/library.json", "application/json"),
+    "/reader/commentaries.json": ("reader/commentaries.json", "application/json"),
+    "/fonts/NotoSerif-Regular.woff": ("reader/fonts/NotoSerif-Regular.woff", "font/woff"),
+    "/fonts/SILEOT.woff": ("reader/fonts/SILEOT.woff", "font/woff"),
     "/simple.min.css": ("site/vendor/simple.min.css", "text/css; charset=utf-8"),
     "/site.css": ("site/site.css", "text/css; charset=utf-8"),
     "/LICENSE": ("LICENSE", "text/plain; charset=utf-8"),
@@ -100,11 +109,12 @@ def render(route, title, body):
   <link rel="stylesheet" href="/site.css">
   <title>{escape(title)}</title>
 </head>
-<body{(' class="home"' if route == "/" else '')}>
+<body{(' class="home"' if route == "/about/" else '')}>
   <a class="skip-link" href="#content">Skip to content</a>
   <header class="site-header">
     <a class="wordmark" href="/">KJV-ish</a>
     <nav aria-label="Main navigation">
+      <a href="/">Reader</a>
       <a href="/contributing/">Contribute</a>
       <a href="{REPO}">GitHub</a>
     </nav>
@@ -138,8 +148,9 @@ def source_versions():
 
 
 class StaticSite(ThreadingHTTPServer):
-    def __init__(self, port):
+    def __init__(self, port, engine_port, audio_config):
         self.pages = build()
+        self.reader = ReaderRoutes(engine_port, audio_config)
         super().__init__(("127.0.0.1", port), Handler)
         self.stop_watch = threading.Event()
         threading.Thread(target=self.watch, daemon=True).start()
@@ -173,7 +184,16 @@ class Handler(BaseHTTPRequestHandler):
         pass
 
     def serve_page(self):
-        path = urlsplit(self.path).path
+        url = urlsplit(self.path)
+        path = url.path
+        if self.server.reader.dispatch(self, url):
+            return
+        if path == "/reader.html":
+            self.send_response(308)
+            self.send_header("Location", "/")
+            self.send_header("Content-Length", "0")
+            self.end_headers()
+            return
         page = self.server.pages.get(path)
         if page is None and path + "/" in self.server.pages:
             self.send_response(308)
@@ -184,16 +204,27 @@ class Handler(BaseHTTPRequestHandler):
         if page is None:
             self.send_error(404)
             return
+        self.send_bytes(page.data, page.media_type)
+
+    def send_bytes(self, data, media_type, cache="no-cache", extra=None):
+        policy = "default-src 'none'; style-src 'self'; img-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'"
+        if urlsplit(self.path).path == "/":
+            policy += "; script-src 'self'; font-src 'self'; connect-src 'self'; media-src 'self' https://kjvish-audio.b-cdn.net"
         self.send_response(200)
-        self.send_header("Content-Type", page.media_type)
-        self.send_header("Content-Length", str(len(page.data)))
-        self.send_header("Cache-Control", "no-cache")
+        self.send_header("Content-Type", media_type)
+        self.send_header("Content-Length", str(len(data)))
+        self.send_header("Cache-Control", cache)
         self.send_header("X-Content-Type-Options", "nosniff")
         self.send_header("Referrer-Policy", "strict-origin-when-cross-origin")
-        self.send_header("Content-Security-Policy", "default-src 'none'; style-src 'self'; img-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'")
+        self.send_header("Content-Security-Policy", policy)
+        for name, value in (extra or {}).items():
+            self.send_header(name, value)
         self.end_headers()
         if self.command == "GET":
-            self.wfile.write(page.data)
+            try:
+                self.wfile.write(data)
+            except (BrokenPipeError, ConnectionResetError):
+                pass
 
 
 def main():
@@ -203,11 +234,13 @@ def main():
     offline.add_argument("--out", type=Path, default=ROOT / ".site-build")
     online = commands.add_parser("serve")
     online.add_argument("--port", type=int, default=8993)
+    online.add_argument("--engine-port", type=int, default=8994)
+    online.add_argument("--audio-config", type=Path, default=ROOT / ".site-runtime/audio.json")
     args = parser.parse_args()
     if args.command == "build":
         write_static(args.out, build())
     else:
-        with StaticSite(args.port) as server:
+        with StaticSite(args.port, args.engine_port, args.audio_config) as server:
             server.serve_forever()
 
 

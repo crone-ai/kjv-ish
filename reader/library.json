@@ -1,0 +1,164 @@
+{
+  "KJV": {
+    "name": "King James Version (1769) with Strongs Numbers and Morphology  and CatchWords",
+    "version": "3.1",
+    "license": "GPL",
+    "source": "https://www.crosswire.org/ftpmirror/pub/sword/packages/rawzip/KJV.zip"
+  },
+  "Abbott": {
+    "name": "Illustrated New Testament",
+    "version": "1.1",
+    "license": "Public Domain",
+    "source": "https://www.crosswire.org/ftpmirror/pub/sword/packages/rawzip/Abbott.zip"
+  },
+  "BSB": {
+    "name": "Berean Standard Bible",
+    "version": "2.0",
+    "license": "Creative Commons: CC0",
+    "source": "https://www.crosswire.org/ftpmirror/pub/sword/packages/rawzip/BSB.zip"
+  },
+  "Burkitt": {
+    "name": "Burkitt's Expository Notes",
+    "version": "1.0",
+    "license": "Public Domain",
+    "source": "https://www.crosswire.org/ftpmirror/pub/sword/packages/rawzip/Burkitt.zip"
+  },
+  "CalvinCommentaries": {
+    "name": "Calvin's Collected Commentaries",
+    "version": "1.1",
+    "license": "Public Domain",
+    "source": "https://www.crosswire.org/ftpmirror/pub/sword/packages/rawzip/CalvinCommentaries.zip"
+  },
+  "Clarke": {
+    "name": "Adam Clarke's Commentary and critical notes on the Bible",
+    "version": "2.0",
+    "license": "Public Domain",
+    "source": "https://www.crosswire.org/ftpmirror/pub/sword/packages/rawzip/Clarke.zip"
+  },
+  "DTN": {
+    "name": "Darby Translation Notes",
+    "version": "1.0",
+    "license": "Public Domain",
+    "source": "https://www.crosswire.org/ftpmirror/pub/sword/packages/rawzip/DTN.zip"
+  },
+  "JFB": {
+    "name": "Jamieson Fausset Brown Bible Commentary",
+    "version": "3.0",
+    "license": "Public Domain",
+    "source": "https://www.crosswire.org/ftpmirror/pub/sword/packages/rawzip/JFB.zip"
+  },
+  "KD": {
+    "name": "Keil and Delitzsch Biblical Commentary on the Old Testament",
+    "version": "2.0",
+    "license": "Public Domain",
+    "source": "https://www.crosswire.org/ftpmirror/pub/sword/packages/rawzip/KD.zip"
+  },
+  "Lightfoot": {
+    "name": "John Lightfoot Commentary",
+    "version": "1.0",
+    "license": "Public Domain",
+    "source": "https://www.crosswire.org/ftpmirror/pub/sword/packages/rawzip/Lightfoot.zip"
+  },
+  "Luther": {
+    "name": "Luther's Commentary on Selected Bible Passages",
+    "version": "1.1",
+    "license": "Public Domain",
+    "source": "https://www.crosswire.org/ftpmirror/pub/sword/packages/rawzip/Luther.zip"
+  },
+  "MHCC": {
+    "name": "Matthew Henry's Concise Commentary on the Whole Bible",
+    "version": "2.0",
+    "license": "Public Domain",
+    "source": "https://www.crosswire.org/ftpmirror/pub/sword/packages/rawzip/MHCC.zip"
+  },
+  "MHC": {
+    "name": "Matthew Henry's Complete Commentary on the Whole Bible",
+    "version": "2.2",
+    "license": "Public Domain",
+    "source": "https://www.crosswire.org/ftpmirror/pub/sword/packages/rawzip/MHC.zip"
+  },
+  "PNT": {
+    "name": "The People's New Testament",
+    "version": "1.1",
+    "license": "Public Domain",
+    "source": "https://www.crosswire.org/ftpmirror/pub/sword/packages/rawzip/PNT.zip"
+  },
+  "QuotingPassages": {
+    "name": "Scripture Passages Quoting Scripture",
+    "version": "1.2.1",
+    "license": "Public Domain",
+    "source": "https://www.crosswire.org/ftpmirror/pub/sword/packages/rawzip/QuotingPassages.zip"
+  },
+  "Scofield": {
+    "name": "Scofield Reference Notes, 1917 Edition",
+    "version": "2.1",
+    "license": "Public Domain",
+    "source": "https://www.crosswire.org/ftpmirror/pub/sword/packages/rawzip/Scofield.zip"
+  },
+  "Spurious": {
+    "name": "Tischendorf's Spurious Passages of the GNT",
+    "version": "1.0",
+    "license": "Public Domain",
+    "source": "https://www.crosswire.org/ftpmirror/pub/sword/packages/rawzip/Spurious.zip"
+  },
+  "TDavid": {
+    "name": "C. H. Spurgeon's Treasury of David",
+    "version": "2.1",
+    "license": "Public Domain",
+    "source": "https://www.crosswire.org/ftpmirror/pub/sword/packages/rawzip/TDavid.zip"
+  },
+  "TFG": {
+    "name": "The Fourfold Gospel and Commentary on Acts of Apostles",
+    "version": "1.5",
+    "license": "Public Domain",
+    "source": "https://www.crosswire.org/ftpmirror/pub/sword/packages/rawzip/TFG.zip"
+  },
+  "TSK": {
+    "name": "Treasury of Scripture Knowledge",
+    "version": "1.4",
+    "license": "Public Domain",
+    "source": "https://www.crosswire.org/ftpmirror/pub/sword/packages/rawzip/TSK.zip"
+  },
+  "Wesley": {
+    "name": "John Wesley's Notes on the Bible",
+    "version": "1.1",
+    "license": "Public Domain",
+    "source": "https://www.crosswire.org/ftpmirror/pub/sword/packages/rawzip/Wesley.zip"
+  },
+  "THOT": {
+    "name": "STEP Hebrew Old Testament",
+    "version": "1.3",
+    "license": "CC BY 4.0 (Credit to \"STEP Bible\" linked to www.STEPBible.org. Report errors to STEPBible@gmail.com)",
+    "source": "https://www.stepbible.org"
+  },
+  "Eng_MHM": {
+    "name": "Matthew Henry's Modern English Commentary on the Whole Bible (MHM)",
+    "version": "1.0",
+    "license": "CC BY 4.0",
+    "source": "https://www.stepbible.org/version.jsp?version=MHM",
+    "attribution": "STEPBible.org; modernized and rearranged using ChatGPT 4 in 2025. Original Matthew Henry text is public domain.",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "modernized": true
+  },
+  "TNotes": {
+    "name": "Tyndale Open Study Notes",
+    "version": "1.0",
+    "license": "CC BY-SA 4.0",
+    "source": "https://www.stepbible.org/version.jsp?version=TNotes",
+    "attribution": "Copyright © 2022 Tyndale House Publishers. Original work: https://tyndaleopenresources.com/",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "modernized": false
+  },
+  "SBLG_th": {
+    "name": "SBL Greek New Testament · STEP tagging",
+    "version": "3.2",
+    "license": "SBLGNT text: CC BY 4.0. STEP module notice retains older non-commercial wording; tagging notice retained for local use.",
+    "source": "https://www.stepbible.org/version.jsp?version=SBLG",
+    "attribution": "SBLGNT © 2010 Society of Biblical Literature and Logos Bible Software. Strong number, morphology and variant tagging by Tyndale House, Cambridge. Current text license: https://sblgnt.com/"
+  },
+  "KJVish": {
+    "name": "KJV-ish",
+    "license": "Editorial material CC BY-SA 4.0; underlying AKJV text public domain",
+    "source": "https://kjvish.com/attribution/"
+  }
+}

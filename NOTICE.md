@@ -14,4 +14,6 @@ Add the edition source link or commit, the license link, and an indication of yo
 
 Engelbrite placed the American King James Version in the public domain on November 8, 1999. The pinned publisher archive retains its original text and change note. The Creative Commons license covers the original contributions to KJV-ish where rights apply. The underlying public-domain text remains available under its original status. [Author’s statement](https://engelbrite.com/inspiredidea.com/home/akj/index.html) · [Publisher’s copy](https://akjv.us/) · [Pinned source record](sources/akjv-1999.json)
 
-The helper code under `tools/` uses its [MIT license](tools/LICENSE). HeroMonk Bible and its audio assets live in a separate repository and retain their own terms.
+The helper code under `tools/` uses its [MIT license](tools/LICENSE). The [reader code](reader/LICENSE), [STEP source](reader/STEP-LICENSE), and [reader fonts](reader/fonts/) carry separate notices. Commentaries and source editions retain the terms shown in the reader.
+
+Pronunciation recordings are available for free playback through the reader. The CC BY-SA 4.0 grant for the KJV-ish translation and editorial material does not extend to these recordings.
